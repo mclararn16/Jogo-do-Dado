@@ -22,7 +22,10 @@ export default function Home() {
         cinco rodadas, quem tiver mais pontos vence o duelo.
       </p>
       <Link href="/game">
-        <button style={{ marginTop: "1.5rem", padding: "0.75rem 1.5rem", fontSize: "1rem" }}>
+        <button style={{ 
+          marginTop: "1.5rem", 
+          padding: "0.75rem 1.5rem", 
+          fontSize: "1rem" }}>
           Jogar agora
         </button>
       </Link>

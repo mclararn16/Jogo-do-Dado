@@ -1,14 +1,14 @@
 .main {
-  --ink: #172b3a;
+  --ink: #8a6662;
   --muted: #71808a;
-  --coral: #e85d3f;
-  --cream: #fffaf0;
+  --coral: #c98d7b;
+  --cream: #e6d0b1;
   min-height: 100vh;
   width: 100%;
   max-width: none;
   margin: 0 auto;
   padding: 54px 0 42px;
-  background: #f3efe6;
+  background: #e2d5c1;
   color: var(--ink);
 }
 
@@ -49,7 +49,7 @@
 .resetButton { display: block; margin: 35px auto 8px; padding: 14px 27px; background: var(--coral); color: var(--cream); }
 .resetButton:hover { background: var(--ink); }
 .history { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-.history span { padding: 7px 10px; border: 1px solid #d9d2c5; color: var(--muted); font-size: 11px; font-weight: 700; }
+.history span { padding: 7px 10px; border: 1px solid #5f3711; color: var(--muted); font-size: 11px; font-weight: 700; }
 .historyDraw { color: var(--ink) !important; }
 
 @media (max-width: 700px) {
@@ -59,7 +59,7 @@
   .roundBadge strong { font-size: 25px; }
   .scoreboard { margin: 26px 0 30px; }
   .players { grid-template-columns: 1fr; gap: 12px; }
-  .playerCard:first-child { border-right: 1px solid #d9d2c5; }
+  .playerCard:first-child { border-right: 1px solid #5f3711; }
   .playerCard { min-height: auto; padding: 22px; }
   .diceRow { margin: 25px 0 18px; }
   .result { margin-top: 27px; font-size: 22px; }
