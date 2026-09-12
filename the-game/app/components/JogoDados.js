@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Dado from "./Dado";
-import styles from "../page.module.css";
+import styles from "./JogoDados.module.css";
 
 const TOTAL_RODADAS = 5;
 const VALOR_INICIAL = [1, 1];
