@@ -4,161 +4,113 @@ import { useState } from "react";
 import Dado from "./Dado";
 import styles from "./JogoDados.module.css";
 
-const TOTAL_RODADAS = 5;
-const VALOR_INICIAL = [1, 1];
+const MAXIMO_RODADAS = 5;
 
-function sortearDados() {
-  return [
-    Math.floor(Math.random() * 6) + 1,
-    Math.floor(Math.random() * 6) + 1,
-  ];
-}
+export default function JogoDados() {
+  const [jogadorAtual, setJogadorAtual] = useState(1);
+  const [rodadaAtual, setRodadaAtual] = useState(1);
+  const [dadosJogador1, setDadosJogador1] = useState([1, 1]);
+  const [dadosJogador2, setDadosJogador2] = useState([1, 1]);
+  const [resultado, setResultado] = useState("");
 
-function compararRodada(dadosJogador1, dadosJogador2) {
+  const fimDeJogo = rodadaAtual > MAXIMO_RODADAS;
   const somaJogador1 = dadosJogador1[0] + dadosJogador1[1];
   const somaJogador2 = dadosJogador2[0] + dadosJogador2[1];
 
-  if (somaJogador1 > somaJogador2) return "Jogador 1 venceu";
-  if (somaJogador2 > somaJogador1) return "Jogador 2 venceu";
-  return "Empate";
-}
+  function sortearDados() {
+    return [
+      Math.floor(Math.random() * 6) + 1,
+      Math.floor(Math.random() * 6) + 1,
+    ];
+  }
 
-export default function JogoDados() {
-  const [rodada, setRodada] = useState(1);
-  const [dados, setDados] = useState({ jogador1: VALOR_INICIAL, jogador2: VALOR_INICIAL });
-  const [jogadorDaVez, setJogadorDaVez] = useState(1);
-  const [resultado, setResultado] = useState(null);
-  const [historico, setHistorico] = useState([]);
-  const [partidaEncerrada, setPartidaEncerrada] = useState(false);
+  function handleJogarDados1Click() {
+    setDadosJogador1(sortearDados());
+    setJogadorAtual(2);
+  }
 
-  const jogar = (jogador) => {
-    if (partidaEncerrada || jogador !== jogadorDaVez) return;
+  function handleJogarDados2Click() {
+    const novosDadosJogador2 = sortearDados();
+    setDadosJogador2(novosDadosJogador2);
 
-    const novosDados = sortearDados();
-    const dadosAtualizados = {
-      ...dados,
-      [jogador === 1 ? "jogador1" : "jogador2"]: novosDados,
-    };
-    setDados(dadosAtualizados);
+    const novaSomaJogador1 = dadosJogador1[0] + dadosJogador1[1];
+    const novaSomaJogador2 = novosDadosJogador2[0] + novosDadosJogador2[1];
 
-    if (jogador === 1) {
-      setJogadorDaVez(2);
-      return;
+    if (novaSomaJogador1 > novaSomaJogador2) {
+      setResultado("Jogador 1 venceu");
+    } else if (novaSomaJogador2 > novaSomaJogador1) {
+      setResultado("Jogador 2 venceu");
+    } else {
+      setResultado("Empate");
     }
 
-    const resultadoDaRodada = compararRodada(
-      dadosAtualizados.jogador1,
-      dadosAtualizados.jogador2,
-    );
-    const novoHistorico = [...historico, resultadoDaRodada];
-    setResultado(resultadoDaRodada);
-    setHistorico(novoHistorico);
+    setJogadorAtual(1);
+    setRodadaAtual(rodadaAtual + 1);
+  }
 
-    if (rodada === TOTAL_RODADAS) {
-      setPartidaEncerrada(true);
-      return;
-    }
-
-    setRodada((rodadaAtual) => rodadaAtual + 1);
-    setJogadorDaVez(1);
-  };
-
-  const jogarNovamente = () => {
-    setRodada(1);
-    setDados({ jogador1: VALOR_INICIAL, jogador2: VALOR_INICIAL });
-    setJogadorDaVez(1);
-    setResultado(null);
-    setHistorico([]);
-    setPartidaEncerrada(false);
-  };
-
-  const vitoriasJogador1 = historico.filter((item) => item === "Jogador 1 venceu").length;
-  const vitoriasJogador2 = historico.filter((item) => item === "Jogador 2 venceu").length;
-  const vencedorDaPartida =
-    vitoriasJogador1 > vitoriasJogador2
-      ? "Jogador 1 venceu a partida"
-      : vitoriasJogador2 > vitoriasJogador1
-        ? "Jogador 2 venceu a partida"
-        : "Empate geral";
+  function handleJogarNovamenteClick() {
+    setJogadorAtual(1);
+    setRodadaAtual(1);
+    setDadosJogador1([1, 1]);
+    setDadosJogador2([1, 1]);
+    setResultado("");
+  }
 
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>Duelo de sorte</p>
-          <h1>Jogo do Dado</h1>
-        </div>
-        <div className={styles.roundBadge}>
-          <span>Rodada</span>
-          <strong>{rodada} <small>/ {TOTAL_RODADAS}</small></strong>
-        </div>
+        <p className={styles.eyebrow}>Duelo de sorte</p>
+        <h1>Jogo do Dado</h1>
+        <p>{fimDeJogo ? "Fim de Jogo" : `Rodada Atual: ${rodadaAtual}`}</p>
       </header>
 
-      <section className={styles.scoreboard} aria-label="Placar da partida">
-        <div><span>Jogador 1</span><strong>{vitoriasJogador1}</strong></div>
-        <div className={styles.scoreDivider}>x</div>
-        <div><span>Jogador 2</span><strong>{vitoriasJogador2}</strong></div>
-      </section>
-
       <section className={styles.players} aria-label="Dados dos jogadores">
-        <PlayerCard
-          jogador={1}
-          dados={dados.jogador1}
-          vez={jogadorDaVez === 1 && !partidaEncerrada}
-          onJogar={() => jogar(1)}
-        />
-        <PlayerCard
-          jogador={2}
-          dados={dados.jogador2}
-          vez={jogadorDaVez === 2 && !partidaEncerrada}
-          onJogar={() => jogar(2)}
-        />
+        <article className={styles.playerCard}>
+          <h2>Jogador 1</h2>
+          <div className={styles.diceRow}>
+            <Dado valor={dadosJogador1[0]} />
+            <Dado valor={dadosJogador1[1]} />
+          </div>
+          <div className={styles.total}>Soma <strong>{somaJogador1}</strong></div>
+          <button
+            className={styles.playButton}
+            disabled={fimDeJogo || jogadorAtual !== 1}
+            onClick={handleJogarDados1Click}
+            type="button"
+          >
+            Jogar dados
+          </button>
+        </article>
+
+        <article className={styles.playerCard}>
+          <h2>Jogador 2</h2>
+          <div className={styles.diceRow}>
+            <Dado valor={dadosJogador2[0]} />
+            <Dado valor={dadosJogador2[1]} />
+          </div>
+          <div className={styles.total}>Soma <strong>{somaJogador2}</strong></div>
+          <button
+            className={styles.playButton}
+            disabled={fimDeJogo || jogadorAtual !== 2}
+            onClick={handleJogarDados2Click}
+            type="button"
+          >
+            Jogar dados
+          </button>
+        </article>
       </section>
 
       {resultado && (
         <p className={`${styles.result} ${resultado === "Empate" ? styles.draw : ""}`}>
-          {partidaEncerrada ? vencedorDaPartida : resultado}
+          {resultado}
         </p>
       )}
 
-      {partidaEncerrada ? (
-        <button className={styles.resetButton} onClick={jogarNovamente} type="button">
+      {fimDeJogo && (
+        <button className={styles.resetButton} onClick={handleJogarNovamenteClick} type="button">
           Jogar Novamente
         </button>
-      ) : (
-        <p className={styles.turnHint}>Vez do Jogador {jogadorDaVez}</p>
       )}
-
-      <div className={styles.history} aria-label="Resultado das rodadas">
-        {historico.map((item, index) => (
-          <span key={`${item}-${index}`} className={item === "Empate" ? styles.historyDraw : ""}>
-            R{index + 1}: {item.replace("Jogador ", "J")}
-          </span>
-        ))}
-      </div>
     </main>
-  );
-}
-
-function PlayerCard({ jogador, dados, vez, onJogar }) {
-  const soma = dados[0] + dados[1];
-
-  return (
-    <article className={`${styles.playerCard} ${vez ? styles.activePlayer : ""}`}>
-      <div className={styles.playerHeading}>
-        <span className={styles.playerNumber}>0{jogador}</span>
-        <div>
-          <h2>Jogador {jogador}</h2>
-          <p>{vez ? "Sua vez de jogar" : "Aguardando"}</p>
-        </div>
-      </div>
-      <div className={styles.diceRow}>
-        {dados.map((valor, index) => <Dado key={`${jogador}-${index}`} valor={valor} />)}
-      </div>
-      <div className={styles.total}>Soma <strong>{soma}</strong></div>
-      <button className={styles.playButton} disabled={!vez} onClick={onJogar} type="button">
-        Jogar dados
-      </button>
-    </article>
   );
 }
